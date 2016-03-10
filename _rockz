@@ -1,0 +1,39 @@
+#compdef rockz
+
+local -a rockz_commands
+for cmd in ${(k)_rockz_cmd[@]} ; do
+	rockz_commands=( "${rockz_commands[@]}" "${cmd}:${_rockz_cmd[${cmd}]}" )
+done
+
+typeset -A opt_args
+local state
+
+_arguments \
+	"1: :{_describe 'command' rockz_commands}" \
+	'*:: :->args'
+
+case ${state} in
+	args)
+		case ${words[1]} in
+			activate | rm)
+				local -a rockz_rockenvs=( $(rockz ls) )
+				_arguments "1: :{_describe 'rockenv' rockz_rockenvs}"
+				;;
+			profile)
+				local -a rockz_profiles=( $(rockz profile) )
+				_arguments -s \
+					":profile name:(${rockz_profiles[*]})" \
+					'(-s --show)'{-s,--show=-}'[Show profile settings]' \
+					'(-l --lua)'{-l,--lua=-}'[Path to Lua executable]:files:_files' \
+					'(-I --include)'{-I,--include=-}'[Path to Lua headers directory]:files:_files' \
+					'(-L --library)'{-L,--library=-}'[Path to the Lua library]:files:_files'
+				;;
+			new)
+				local -a rockz_profiles=( $(rockz profile) )
+				_arguments -s \
+					'1:rockenv name:' \
+					"(-p --profile)"{-p,--profile=-}"[Lua rockenv profile]:profile:(${rockz_profiles[*]})"
+				;;
+		esac
+		;;
+esac
