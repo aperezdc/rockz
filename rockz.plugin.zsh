@@ -168,7 +168,7 @@ rockz-rm () {
 	fi
 
 	local renv_path="${ROCKZ_HOME}/$1"
-	[[ -f ${renv_path} ]] || __rockz_die "The rockenv '$1' does not exist."
+	[[ -d ${renv_path} ]] || __rockz_die "The rockenv '$1' does not exist."
 
 	rm -rf "${renv_path}"
 }
