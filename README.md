@@ -60,6 +60,43 @@ With [zgen](https://github.com/tarjoilija/zgen), add the following to your
 zgen load aperezdc/rockz
 ```
 
+### Using with LuaJIT
+
+RockZ works just fine with [LuaJIT](http://luajit.org). You will need to
+create a *profile* pointing to the LuaJIT binary and libraries. Use the
+`profile` subcommand as follows:
+
+```sh
+rockz profile luajit \
+  --lua=/usr/bin/luajit \
+  --include=/usr/include/luajit-2.0 \
+  --library=/usr/lib/libluajit-5.1.so.2
+```
+
+*(Note that the actual paths may be different in your system — please
+change the paths in the above invocation accordingly.)*
+
+Now that the profile is available, use `--profile` with the `new` subcommand
+to create a LuaJIT-powered environment:
+
+```sh
+rockz new luajitenv --profile=luajit
+```
+
+Now because RockZ created a symbolic link names `lua` to the Lua interpreter
+specified in the profile, using `lua` will actually run LuaJIT:
+
+```
+% readlink "$(which lua)"
+/usr/bin/luajit-2.0.4
+% lua
+LuaJIT 2.0.4 -- Copyright (C) 2005-2015 Mike Pall. http://luajit.org/
+JIT: ON CMOV SSE2 SSE3 fold cse dce fwd dse narrow loop abc sink fuse
+>
+```
+
+Isn't that convenient?
+
 
 ### Rockenv name in the prompt
 
