@@ -1,0 +1,23 @@
+Environment Variables
+=====================
+
+RockZ uses the following environment variables:
+
+* ROCKZ_LUAROCKS_VERSION: Version of LuaRocks to be installed in new
+  rockenvs. By default this is "2.3.0", and can be overriden both in your
+  "~/.zshrc" or interactively.
+
+* ROCKZ_LUAROCKS_DISTURL: Base URL to a location containing tarballs for
+  LuaRocks. By default this is "http://luarocks.org/releases/", and can
+  be overriden both in your "~/.zshrc" or interactively.
+
+* ROCKZ_HOME: Path to the home directory where rockenvs are kept.
+  (Use "rockz help homedir" for more information.)
+
+* ROCK_ENV: Path to the active rockenv. Undefined if no rockenv
+  is active.
+
+* ROCK_ENV_NAME: Name of the active rockenv. Undefined if no rockenv
+  is active. This is always the last path component of ${ROCK_ENV}, with
+  trailing slashes removed, and it is provided as a convenience.
+

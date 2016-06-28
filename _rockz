@@ -1,8 +1,9 @@
 #compdef rockz
 
 local -a rockz_commands
-for cmd in ${(k)_rockz_cmd[@]} ; do
-	rockz_commands=( "${rockz_commands[@]}" "${cmd}:${_rockz_cmd[${cmd}]}" )
+for file in "${_rockz_dir}"/doc/cmd-*.txt ; do
+	local cmd=${cmd#*/cmd-}
+	rockz_commands=+( "${cmd%.txt}:$(read -re < "${file}")" )
 done
 
 typeset -A opt_args

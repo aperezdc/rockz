@@ -1,0 +1,5 @@
+Lists available rockenvs
+Usage: rockz ls
+
+  Lists the names of the available rockenvs, one per line.
+

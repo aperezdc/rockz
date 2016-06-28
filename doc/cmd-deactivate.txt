@@ -1,0 +1,7 @@
+Deactivate the current rockenv
+Usage: rockz deactivate
+
+  Deactivates the active rockenv. This will unset ${VIRTUAL_ENV} and
+  ${VIRTUAL_ENV_NAME}. Also, the "bin/" subdirectory of the rockenv
+  will be removed from ${PATH}.
+

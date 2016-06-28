@@ -10,6 +10,8 @@
 : ${ROCKZ_LUAROCKS_VERSION:=2.3.0}
 : ${ROCKZ_LUAROCKS_DISTURL:='http://luarocks.org/releases/'}
 
+typeset -gr _rockz_dir=$(realpath "$(dirname "$0")")
+
 # Arguments: prefix_path lua_bin lua_lib lua_inc
 #
 __rockz_luarocks_install () {
@@ -39,10 +41,8 @@ __rockz_die () {
 	return 1
 }
 
-typeset -gA _rockz_cmd
-
 rockz () {
-	if [[ $# -eq 0 || $1 = --help || $1 == -h ]] ; then
+	if [[ $# -eq 0 || $1 = --help || $1 = -h ]] ; then
 		rockz help
 		return
 	fi
@@ -51,13 +51,16 @@ rockz () {
 	shift
 
 	if typeset -fz "${fname}" ; then
-		"${fname}" "$@"
+		if [[ $1 = --help || $1 = -h ]] ; then
+			rockz help "${cmd}"
+		else
+			"${fname}" "$@"
+		fi
 	else
 		echo "The subcommand '${cmd}' is not defined" 1>&2
 	fi
 }
 
-_rockz_cmd[activate]='Activate a rockenv'
 rockz-activate () {
 	emulate -L zsh
 	setopt local_options err_return
@@ -91,7 +94,6 @@ rockz-activate () {
 	eval "$("${ROCK_ENV}/bin/luarocks" path)"
 }
 
-_rockz_cmd[new]='Create a new rockenv'
 rockz-new () {
 	emulate -L zsh
 	setopt local_options err_return
@@ -123,7 +125,6 @@ rockz-new () {
 	rockz-activate "${renv_name}"
 }
 
-_rockz_cmd[deactivate]='Deactivate the active rockenv'
 rockz-deactivate () {
 	emulate -L zsh
 	setopt local_options err_return
@@ -157,7 +158,6 @@ rockz-deactivate () {
 	unset ROCK_ENV ROCK_ENV_NAME
 }
 
-_rockz_cmd[rm]='Delete a rockenv'
 rockz-rm () {
 	emulate -L zsh
 	setopt local_options err_return
@@ -173,7 +173,6 @@ rockz-rm () {
 	rm -rf "${renv_path}"
 }
 
-_rockz_cmd[ls]='List available rockenvs'
 rockz-ls () {
 	emulate -L zsh
 	setopt local_options err_return null_glob
@@ -187,7 +186,6 @@ rockz-ls () {
 	fi
 }
 
-_rockz_cmd[cd]='Change to the directory of the active rockenv.'
 rockz-cd () {
 	emulate -L zsh
 	setopt local_options err_return
@@ -197,21 +195,47 @@ rockz-cd () {
 	cd "${ROCK_ENV}"
 }
 
-_rockz_cmd[help]='Show usage information'
 rockz-help () {
-	cat <<-EOF
-	Usage: rockz <command> [<args>]
-
-	Available commands:
-
-	EOF
-	for cmd in ${(k)_rockz_cmd[@]} ; do
-		printf "  %-12s %s\n" "${cmd}" "${_rockz_cmd[${cmd}]}"
-	done
-	echo
+	if [[ $# -eq 0 || $1 = commands ]] ; then
+		if [[ $# -eq 0 ]] ; then
+			echo 'Usage: rockz <command> [<args>]'
+			echo
+		fi
+		echo 'Available commands:'
+		echo
+		for file in "${_rockz_dir}"/doc/cmd-*.txt ; do
+			local cmd=${file#*/cmd-}
+			printf '  %-12s ' "${cmd%.txt}"
+			read -re < "${file}"
+		done
+		echo
+	elif [[ $# -eq 1 && $1 = topics ]] ; then
+		echo 'Available topics:'
+		echo
+		for file in "${_rockz_dir}"/doc/topic-*.txt ; do
+			local topic=${file#*/topic-}
+			printf '  %-12s ' "${topic%.txt}"
+			read -re < "${file}"
+		done
+		echo
+	elif [[ $# -eq 1 ]] ; then
+		if [[ -r ${_rockz_dir}/doc/cmd-$1.txt ]] ; then
+			cat "${_rockz_dir}/doc/cmd-$1.txt"
+		elif [[ -r ${_rockz_dir}/doc/topic-$1.txt ]] ; then
+			cat "${_rockz_dir}/doc/topic-$1.txt"
+		else
+			cat 1>&2 <<-EOF
+			No such topic or command: $1
+			Tip: Use "rockz help topics" for a list of topics, or "rockz help commands" for a list of commands.
+			EOF
+			return 1
+		fi
+	else
+		echo 'Usage: rockz <command> [<args>]' 1>&2
+		return 1
+	fi
 }
 
-_rockz_cmd[profile]='List and create Lua profiles'
 rockz-profile () {
 	emulate -L zsh
 	setopt local_options err_return
@@ -262,5 +286,3 @@ rockz-profile () {
 	ROCKZ_LUA_INC='${lua_inc}'
 	EOF
 }
-
-readonly _rockz_cmd

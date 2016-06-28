@@ -1,0 +1,7 @@
+Change to the directory of the active rockenv
+Usage: rockz cd
+
+  The "cd" command changes the current working directory of the shell to
+  that of the base directory of the active rockenv. Using this command is
+  equivalent to issues "cd ${ROCK_ENV}" directly in the shell.
+

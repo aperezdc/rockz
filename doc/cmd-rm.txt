@@ -1,0 +1,6 @@
+Delete a rockenv
+Usage: rockz rm <rockenv>
+
+  Removes a rockenv given its name. Note that this command does not ask
+  for confirmation, and the removal is irreversible (there is no undo!).
+

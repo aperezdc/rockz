@@ -1,0 +1,11 @@
+Create a new rockenv
+Usage: rockz new <rockenv> [-p <profile>]
+
+  Creates a new rockenv. Only the <rockenv> name is required. The optional
+  <profile> parameter can be given to sue a profile other than "default".
+
+    -p, --profile <profile>   Use the specified profile (default: "default").
+
+  Hint: Use "rockz help profiles" for more information on how to define and
+  use different profiles.
+

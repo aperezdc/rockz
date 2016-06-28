@@ -1,0 +1,15 @@
+The RockZ home directory
+========================
+
+Each rockenv is stored in a subdirectory of the home directory. The variable
+${ROCKZ_HOME} defines the path to the home directory. If not overriden, its
+default value is "~/.rockenvs". To configure a custom path, define the
+variable in your "~/.zshrc":
+
+  ROCKZ_HOME=/path/to/rockenvs
+
+The variable does not need to be exported, and it will be honored regardless
+of whether it has been defined before or after sourcing RockZ. This means that
+you can redefine ${ROCKZ_HOME} from an interactive shell, but note that setting
+the home directory while a rockenv is active is unsupported.
+

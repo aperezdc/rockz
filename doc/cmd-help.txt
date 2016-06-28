@@ -1,0 +1,11 @@
+Shows usage information
+Usage: rockz help [<topic> | <command>]
+
+Provides help on RockZ and usage instructions for each of its subcommands.
+The optional argument maybe either a command or a topic name.
+
+  rockz help commands      Obtain a list of available commands.
+  rockz help topics        Obtain a list of available help topics.
+  rockz help <command>     Obtain help about a given command.
+  rockz help <topic>       Obtain help about a given topic.
+

@@ -1,0 +1,7 @@
+Activate a rockenv
+Usage: rockz activate <rockenv>
+
+  Activates a rockenv given its name. This will set the ${ROCK_ENV}
+  and ${ROCK_ENV_NAME} environment variables, and add the rockenv
+  "bin/" subdirectory to the front of ${PATH}.
+
