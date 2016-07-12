@@ -1,0 +1,12 @@
+Manage rockenv profiles
+Usage: rockz profile <name> --lua=PATH --library=PATH --include=PATH
+       rockz profile <name> --show
+       rockz profile
+
+  Using the first invocation form, defines a new profile which uses the
+  specified Lua interpreter, library, and include paths. The second
+  invocation form shows the paths used by a given profile. When passing
+  no arguments, a list of defined profiles is printed, one per line.
+
+  For more information on profiles, use "rockz help profiles".
+
