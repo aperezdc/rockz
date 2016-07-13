@@ -1,36 +1,67 @@
 #compdef rockz
 
-local -a rockz_commands
-for file in "${_rockz_dir}"/doc/cmd-*.txt ; do
-	local cmd=${file#*/cmd-}
-	rockz_commands+=( "${cmd%.txt}:$(read -re < "${file}")" )
-done
-local -a rockz_rockenvs=( $(rockz ls) )
+_rockz_rockenv () {
+	local -a _rockz_rockenvs=( $(rockz ls) )
+	_describe 'rockenvs' _rockz_rockenvs
+}
 
-typeset -A opt_args
-local state
+_rockz_help_topic () {
+	local -a _topics
+	for file in "${_rockz_dir}"/doc/cmd-*.txt ; do
+		local topic=${file#*/cmd-}
+		_topics+=( "${topic%.txt}:$(read -re < "${file}") (command)" )
+	done
+	for file in "${_rockz_dir}"/doc/topic-*.txt ; do
+		local topic=${file#*/topic-}
+		_topics+=( "${topic%.txt}:$(read -re < "${file}") (topic)" )
+	done
+	_describe 'help topics' _topics
+}
 
-_arguments \
-	"1: :{_describe 'command' rockz_commands -- 'rockenv' rockz_rockenvs}" \
-	'*:: :->args'
+_rockz_profiles () {
+	local -a _profiles=( $(rockz profile) )
+	_describe 'profiles' _profiles
+}
 
-case ${words[1]} in
-	activate | rm)
-		_arguments "1: :{_describe 'rockenv' rockz_rockenvs}"
-		;;
-	profile)
-		local -a rockz_profiles=( $(rockz profile) )
-		_arguments -s \
-			":profile name:(${rockz_profiles[*]})" \
-			'(-s --show)'{-s,--show=-}'[Show profile settings]' \
-			'(-l --lua)'{-l,--lua=-}'[Path to Lua executable]:files:_files' \
-			'(-I --include)'{-I,--include=-}'[Path to Lua headers directory]:files:_files' \
-			'(-L --library)'{-L,--library=-}'[Path to the Lua library]:files:_files'
-		;;
-	new)
-		local -a rockz_profiles=( $(rockz profile) )
-		_arguments -s \
-			'1:rockenv name:' \
-			"(-p --profile)"{-p,--profile=-}"[Lua rockenv profile]:profile:(${rockz_profiles[*]})"
-		;;
-esac
+_rockz_rm       () { _arguments '1:rockenv name:_rockz_rockenv' }
+_rockz_activate () { _arguments '1:rockenv name:_rockz_rockenv' }
+_rockz_help     () { _arguments '1:help topic:_rockz_help_topic' }
+_rockz_new      () {
+	_arguments '1:rockenv name:' \
+		"(-p --profile)"{-p,--profile=-}"[Lua rockenv profile]:profile:_rockz_profile"
+}
+_rockz_profile  () {
+	_arguments \
+		'1:profile name:_rockz_profiles' \
+		'(-s --show)'{-s,--show=-}'[Show profile settings]' \
+		'(-l --lua)'{-l,--lua=-}'[Path to Lua executable]:files:_files' \
+		'(-I --include)'{-I,--include=-}'[Path to Lua headers directory]:files:_files' \
+		'(-L --library)'{-L,--library=-}'[Path to the Lua library]:files:_files'
+}
+
+_rockz_command () {
+	local -a _rockz_cmds
+	for file in "${_rockz_dir}"/doc/cmd-*.txt ; do
+		local cmd=${file#*/cmd-}
+		_rockz_cmds+=( "${cmd%.txt}:$(read -re < "${file}")" )
+	done
+	if (( CURRENT == 1 )) ; then
+		local -a _rockz_rockenvs=( $(rockz ls) )
+		_describe 'commands' _rockz_cmds
+		_describe 'rockenvs' _rockz_rockenvs
+	else
+		local curcontext=${curcontext}
+		local cmd=${${_rockz_cmds[(r)$words[1]:*]%%:*}}
+		if (( $#cmd )) ; then
+			if (( $+functions[_rockz_${cmd}] )) ; then
+				_rockz_${cmd}
+			else
+				_message 'no more options'
+			fi
+		else
+			_message "unknown rockz command: $words[1]"
+		fi
+	fi
+}
+
+_arguments '*::rockz command:_rockz_command'
