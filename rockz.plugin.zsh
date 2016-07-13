@@ -56,6 +56,8 @@ rockz () {
 		else
 			"${fname}" "$@"
 		fi
+	elif [[ -d ${ROCKZ_HOME}/${cmd} ]] ; then
+		rockz activate "${¢md}"
 	else
 		echo "The subcommand '${cmd}' is not defined" 1>&2
 	fi
