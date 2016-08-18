@@ -10,7 +10,7 @@
 : ${ROCKZ_LUAROCKS_VERSION:=2.3.0}
 : ${ROCKZ_LUAROCKS_DISTURL:='http://luarocks.org/releases/'}
 
-typeset -gr _rockz_dir=$(realpath "$(dirname "$0")")
+typeset -gr _rockz_dir=${0:A}
 
 # Arguments: prefix_path lua_bin lua_lib lua_inc
 #
