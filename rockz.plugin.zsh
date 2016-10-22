@@ -7,7 +7,7 @@
 #
 
 : ${ROCKZ_HOME:=${HOME}/.rockenvs}
-: ${ROCKZ_LUAROCKS_VERSION:=2.4.0}
+: ${ROCKZ_LUAROCKS_VERSION:=2.4.1}
 : ${ROCKZ_LUAROCKS_DISTURL:='http://luarocks.org/releases/'}
 
 typeset -gr _rockz_dir=${0:A:h}
