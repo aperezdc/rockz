@@ -121,7 +121,7 @@ rockz-new () {
 	local args=("${ROCKZ_LUA_BIN}" "${ROCKZ_LUA_LIB}" "${ROCKZ_LUA_INC}")
 	unset ROCKZ_LUA_BIN ROCKZ_LUA_LIB ROCKZ_LUA_INC
 
-	trap "[[ \$? -eq 0 ]] || rm -rf '${renv_path}'" EXIT
+	trap "[[ \$? -eq 0 ]] || rm -rf '${renv_path}' ; cd '$(pwd)'" EXIT
 
 	__rockz_luarocks_install "${renv_path}" "${args[@]}"
 	rockz-activate "${renv_name}"
