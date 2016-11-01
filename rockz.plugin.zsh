@@ -22,7 +22,24 @@ __rockz_luarocks_install () {
 	pushd -q "$1"
 	ln -s "$2" "$1/bin/lua"
 
-	curl -fL -\# "${ROCKZ_LUAROCKS_DISTURL}/luarocks-${ROCKZ_LUAROCKS_VERSION}.tar.gz" | tar -xzf -
+	local tarball="luarocks-${ROCKZ_LUAROCKS_VERSION}.tar.gz"
+	curl -\# -fLo "${tarball}#1" "${ROCKZ_LUAROCKS_DISTURL}/${tarball}{,.asc}"
+
+	local gpgbin
+	read -r gpgbin < <(whence gpg2 gpg)
+	if [[ -n ${gpgbin} && -x ${gpgbin} ]] ; then
+		"${gpgbin}" --verify "${tarball}.asc" "${tarball}" \
+			|| __rockz_die "Invalid PGP signature for ${tarball}"
+	else
+		echo '[1;31m== WARNING: GnuPG is not installed ==[0;0m'
+		printf 'Cannot check signature of %s, continue anyway? [y/N] ' "${tarball}"
+		local answer
+		read -q answer ; echo "${answer}"
+		[[ ${answer} = y ]] || __rockz_die 'LuaRocks intallation aborted by user'
+	fi
+
+	tar -xzf "${tarball}"
+	rm "${tarball}" "${tarball}.asc"
 	cd "luarocks-${ROCKZ_LUAROCKS_VERSION}"
 	./configure \
 		--with-downloader=curl \
