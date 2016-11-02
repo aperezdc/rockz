@@ -205,6 +205,13 @@ rockz-ls () {
 	fi
 }
 
+rockz-_exists () {
+	emulate -L zsh
+	setopt local_options err_return
+	[[ $# -eq 1 ]] || __rockz_die 'No rockenv specified.'
+	[[ -x ${ROCKZ_HOME}/$1/bin/lua ]]
+}
+
 rockz-cd () {
 	emulate -L zsh
 	setopt local_options err_return
