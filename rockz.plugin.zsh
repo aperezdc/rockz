@@ -221,6 +221,13 @@ rockz-cd () {
 	cd "${ROCK_ENV}"
 }
 
+rockz-current () {
+	emulate -L zsh
+	setopt local_options err_return
+	[[ ${ROCK_ENV:+set} = set ]] || __rockz_die 'No rockenv is active.'
+	echo "${ROCK_ENV}"
+}
+
 rockz-help () {
 	if [[ $# -eq 0 || $1 = commands ]] ; then
 		if [[ $# -eq 0 ]] ; then

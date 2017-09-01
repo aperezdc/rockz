@@ -1,0 +1,4 @@
+Show the current rockenv
+Usage: rockz current
+
+Shows the name of the active rockenv.
