@@ -38,16 +38,22 @@ __rockz_luarocks_install () {
 		[[ ${answer} = y ]] || __rockz_die 'LuaRocks intallation aborted by user'
 	fi
 
+	local -a confopts=(
+		--force-config
+		--prefix="$1"
+		--with-lua="$1"
+		--with-lua-lib="${3:h}"
+		--with-lua-include="$4"
+	)
+
+	case ${ROCKZ_LUAROCKS_VERSION} in
+		2.*.*) confopts+=( --with-downloader=curl ) ;;
+	esac
+
 	tar -xzf "${tarball}"
 	rm "${tarball}" "${tarball}.asc"
 	cd "luarocks-${ROCKZ_LUAROCKS_VERSION}"
-	./configure \
-		--with-downloader=curl \
-		--force-config \
-		--prefix="$1" \
-		--with-lua="$1" \
-		--with-lua-lib="$3" \
-		--with-lua-include="$4"
+	./configure "${confopts[@]}"
 	make -s bootstrap
 	rm -rf "../luarocks-${ROCKZ_LUAROCKS_VERSION}"
 	popd -q
