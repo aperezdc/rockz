@@ -18,6 +18,26 @@ __rockz_luarocks_install () {
 	emulate -L zsh
 	setopt local_options err_return
 
+	local -a confopts=( --force-config --prefix="$1" )
+	case ${ROCKZ_LUAROCKS_VERSION} in
+		2.*.*)
+			confopts+=(
+				--with-downloader=curl
+				--with-lua="$1"
+				--with-lua-lib="${3:h}"
+				--with-lua-include="$4"
+			) ;;
+		3.*.*)
+			confopts+=(
+				--with-lua-bin="${2:h}"
+				--with-lua-interpreter="${2:t}"
+				--with-lua-lib="${3:h}"
+				--with-lua-include="$4"
+			) ;;
+		*) __rockz_die "Unsupported LuaRocks version: ${ROCKZ_LUAROCKS_VERSION}\nPlease file a bug at https://github.com/aperezdc/rockz/issues"
+			;;
+	esac
+
 	mkdir -p "$1/bin"
 	pushd -q "$1"
 	ln -s "$2" "$1/bin/lua"
@@ -37,18 +57,6 @@ __rockz_luarocks_install () {
 		read -q answer ; echo "${answer}"
 		[[ ${answer} = y ]] || __rockz_die 'LuaRocks intallation aborted by user'
 	fi
-
-	local -a confopts=(
-		--force-config
-		--prefix="$1"
-		--with-lua="$1"
-		--with-lua-lib="${3:h}"
-		--with-lua-include="$4"
-	)
-
-	case ${ROCKZ_LUAROCKS_VERSION} in
-		2.*.*) confopts+=( --with-downloader=curl ) ;;
-	esac
 
 	tar -xzf "${tarball}"
 	rm "${tarball}" "${tarball}.asc"
